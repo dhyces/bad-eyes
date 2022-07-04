@@ -1,0 +1,15 @@
+modLoader="javafml" #mandatory
+loaderVersion="[41,)"
+license="CC0"
+#issueTrackerURL="https://change.me.to.your.issue.tracker.example.invalid/" #optional
+[[mods]]
+modId="badeyes" #mandatory
+version="${file.jarVersion}" #mandatory
+displayName="Bad Eyes"
+#updateJSONURL="https://change.me.example.invalid/updates.json"
+#displayURL="https://change.me.to.your.mods.homepage.example.invalid/"
+logoFile=""
+authors="dhyces"
+description='''
+
+'''

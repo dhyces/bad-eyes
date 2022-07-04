@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "G": {
+      "tag": "forge:glass_panes"
+    },
+    "I": {
+      "tag": "forge:nuggets/iron"
+    }
+  },
+  "pattern": [
+    "I I",
+    "GIG"
+  ],
+  "result": {
+    "item": "badeyes:simple_glasses"
+  }
+}
