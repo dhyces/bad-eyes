@@ -13,9 +13,9 @@ import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.CustomHeadLayer;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class GlassesRenderLayer extends RenderLayer<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>> {
 
@@ -26,7 +26,7 @@ public class GlassesRenderLayer extends RenderLayer<AbstractClientPlayer, Player
     @Override
     public void render(PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, AbstractClientPlayer player, float pLimbSwing, float pLimbSwingAmount, float pPartialTick, float pAgeInTicks, float pNetHeadYaw, float pHeadPitch) {
         if (BadEyes.hasGlasses(player)) {
-            var location = Registry.ITEM.getKey(player.getInventory().armor.get(EquipmentSlot.HEAD.getIndex()).getItem());
+            var location = ForgeRegistries.ITEMS.getKey(player.getInventory().armor.get(EquipmentSlot.HEAD.getIndex()).getItem());
             var glassesModel = Minecraft.getInstance().getModelManager().getModel(new ResourceLocation(location.getNamespace(), "entity/" + location.getPath()));
             pPoseStack.pushPose();
             getParentModel().getHead().translateAndRotate(pPoseStack);

@@ -41,11 +41,6 @@ public class BadEyes {
         }
     }
 
-    public static boolean hasBadEyes(Player player) {
-        var headItem = player.getInventory().armor.get(EquipmentSlot.HEAD.getIndex());
-        return !headItem.is(BadEyes.GLASSES) || headItem.isEmpty();
-    }
-
     public static boolean hasGlasses(Player player) {
         return player.getInventory().armor.get(EquipmentSlot.HEAD.getIndex()).is(BadEyes.GLASSES);
     }

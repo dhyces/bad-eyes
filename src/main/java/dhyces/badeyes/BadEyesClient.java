@@ -23,15 +23,9 @@ public class BadEyesClient {
     }
 
     public static void init(IEventBus bus) {
-        bus.addListener(BadEyesClient::clientSetup);
         bus.addListener(BadEyesClient::modelBake);
         bus.addListener(BadEyesClient::reloadSeparateModels);
         bus.addListener(BadEyesClient::entityRendererAddLayers);
-    }
-
-    static void clientSetup(FMLClientSetupEvent event) {
-        event.enqueueWork(() -> {
-        });
     }
 
     static void modelBake(ModelRegistryEvent event) {
@@ -44,7 +38,10 @@ public class BadEyesClient {
     }
 
     private static void reloadSeparateModels(final RegisterClientReloadListenersEvent event) {
-        event.registerReloadListener((pPreparationBarrier, pResourceManager, pPreparationsProfiler, pReloadProfiler, pBackgroundExecutor, pGameExecutor) -> pPreparationBarrier.wait(Unit.INSTANCE).thenRunAsync(() -> addSpecialModels()));
+        event.registerReloadListener(
+                (pPreparationBarrier, pResourceManager, pPreparationsProfiler, pReloadProfiler, pBackgroundExecutor, pGameExecutor) -> {
+                    return pPreparationBarrier.wait(Unit.INSTANCE).thenRunAsync(() -> addSpecialModels());
+                });
     }
 
     static void entityRendererAddLayers(EntityRenderersEvent.AddLayers event) {
