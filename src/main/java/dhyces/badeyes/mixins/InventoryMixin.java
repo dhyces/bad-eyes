@@ -12,6 +12,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(Inventory.class)
 public class InventoryMixin {
@@ -22,11 +23,15 @@ public class InventoryMixin {
     @Shadow
     private Player player;
 
-    @Inject(method = "hurtArmor", at = @At("HEAD"))
+    @Inject(method = "hurtArmor", at = @At(value = "TAIL"))
     private void hurtArmor(DamageSource p_150073_, float p_150074_, int[] p_150075_, CallbackInfo ci) {
-        var item = armor.get(EquipmentSlot.HEAD.getIndex());
-        if (item.is(BadEyes.GLASSES)) {
-            item.hurtAndBreak(1, player, player1 -> player1.broadcastBreakEvent(EquipmentSlot.HEAD));
+        for (int i : p_150075_) {
+            if (i == EquipmentSlot.HEAD.getIndex()) {
+                var item = armor.get(EquipmentSlot.HEAD.getIndex());
+                if (item.is(BadEyes.GLASSES)) {
+                    item.hurtAndBreak((int)p_150074_, player, player1 -> player1.broadcastBreakEvent(EquipmentSlot.HEAD));
+                }
+            }
         }
     }
 }
