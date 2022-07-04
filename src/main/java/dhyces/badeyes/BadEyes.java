@@ -1,5 +1,6 @@
 package dhyces.badeyes;
 
+import dhyces.badeyes.datagen.BadEyesLanguageProvider;
 import dhyces.badeyes.datagen.BadEyesModelProviders;
 import dhyces.badeyes.datagen.BadEyesRecipeProvider;
 import dhyces.badeyes.datagen.BadEyesTagProviders;
@@ -51,6 +52,7 @@ public class BadEyes {
 
     private void datagen(GatherDataEvent event) {
         event.getGenerator().addProvider(event.includeClient(), new BadEyesModelProviders.BadEyesItemModelProvider(event.getGenerator(), event.getExistingFileHelper()));
+        event.getGenerator().addProvider(event.includeClient(), new BadEyesLanguageProvider(event.getGenerator()));
 
         event.getGenerator().addProvider(event.includeServer(), new BadEyesTagProviders.BadEyesItemTagProvider(event.getGenerator(), event.getExistingFileHelper()));
         event.getGenerator().addProvider(event.includeServer(), new BadEyesRecipeProvider(event.getGenerator()));
