@@ -2,14 +2,17 @@ package dhyces.badeyes;
 
 import dhyces.badeyes.client.GlassesRenderLayer;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.HeadedModel;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class BadEyesClient {
 
@@ -33,5 +36,11 @@ public class BadEyesClient {
             LivingEntityRenderer<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>> renderer = event.getSkin(skin);
             renderer.addLayer(new GlassesRenderLayer(renderer));
         });
+        for (EntityType type : ForgeRegistries.ENTITY_TYPES.getValues()) {
+            var renderer = Minecraft.getInstance().getEntityRenderDispatcher().renderers.get(type);
+            if (renderer != null && renderer instanceof LivingEntityRenderer livingEntityRenderer && livingEntityRenderer.getModel() instanceof HeadedModel) {
+                livingEntityRenderer.addLayer(new GlassesRenderLayer(livingEntityRenderer));
+            }
+        }
     }
 }
