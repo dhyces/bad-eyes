@@ -5,13 +5,11 @@ import dhyces.badeyes.BadEyes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.HeadedModel;
-import net.minecraft.client.model.Model;
-import net.minecraft.client.model.PlayerModel;
-import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.CustomHeadLayer;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
@@ -42,8 +40,9 @@ public class GlassesRenderLayer<T extends LivingEntity, M extends EntityModel<T>
             CustomHeadLayer.translateToHead(pPoseStack, false);
             var last = pPoseStack.last();
             for (RenderType renderType : glassesModel.getRenderTypes(itemStack, Minecraft.useShaderTransparency())) {
+                var buffer = pBuffer.getBuffer(renderType);
                 for (BakedQuad quad : glassesModel.getQuads(null, null, RandomSource.create(42L), ModelData.EMPTY, renderType)) {
-                    pBuffer.getBuffer(renderType).putBulkData(last, quad, 1.0F, 1.0F, 1.0F, pPackedLight, 0);
+                    buffer.putBulkData(last, quad, 1.0F, 1.0F, 1.0F, pPackedLight, LivingEntityRenderer.getOverlayCoords(livingEntity, 0.0F));
                 }
             }
             pPoseStack.popPose();
