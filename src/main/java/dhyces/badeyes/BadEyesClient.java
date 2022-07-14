@@ -6,14 +6,10 @@ import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Unit;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
-import net.minecraftforge.client.model.ForgeModelBakery;
+import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
 public class BadEyesClient {
 
@@ -23,25 +19,13 @@ public class BadEyesClient {
     }
 
     public static void init(IEventBus bus) {
-        bus.addListener(BadEyesClient::modelBake);
-        bus.addListener(BadEyesClient::reloadSeparateModels);
+        bus.addListener(BadEyesClient::registerAdditionalModels);
         bus.addListener(BadEyesClient::entityRendererAddLayers);
     }
 
-    static void modelBake(ModelRegistryEvent event) {
-        addSpecialModels();
-    }
-
-    static void addSpecialModels() {
-        ForgeModelBakery.addSpecialModel(new ResourceLocation(BadEyes.MODID, "entity/simple_glasses"));
-        ForgeModelBakery.addSpecialModel(new ResourceLocation(BadEyes.MODID, "entity/netherite_glasses"));
-    }
-
-    private static void reloadSeparateModels(final RegisterClientReloadListenersEvent event) {
-        event.registerReloadListener(
-                (pPreparationBarrier, pResourceManager, pPreparationsProfiler, pReloadProfiler, pBackgroundExecutor, pGameExecutor) -> {
-                    return pPreparationBarrier.wait(Unit.INSTANCE).thenRunAsync(() -> addSpecialModels());
-                });
+    static void registerAdditionalModels(ModelEvent.RegisterAdditional event) {
+        event.register(new ResourceLocation(BadEyes.MODID, "entity/simple_glasses"));
+        event.register(new ResourceLocation(BadEyes.MODID, "entity/netherite_glasses"));
     }
 
     static void entityRendererAddLayers(EntityRenderersEvent.AddLayers event) {

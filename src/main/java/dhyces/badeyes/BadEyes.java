@@ -7,14 +7,15 @@ import dhyces.badeyes.datagen.BadEyesTagProviders;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLLoader;
-import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
@@ -41,15 +42,17 @@ public class BadEyes {
         }
     }
 
-    public static boolean hasGlasses(Player player) {
-        return player.getInventory().armor.get(EquipmentSlot.HEAD.getIndex()).is(BadEyes.GLASSES);
+    public static boolean hasGlasses(LivingEntity entity) {
+        return entity.getSlot(EquipmentSlot.HEAD.getIndex()).get().is(BadEyes.GLASSES);
     }
 
     private void datagen(GatherDataEvent event) {
-        event.getGenerator().addProvider(event.includeClient(), new BadEyesModelProviders.BadEyesItemModelProvider(event.getGenerator(), event.getExistingFileHelper()));
-        event.getGenerator().addProvider(event.includeClient(), new BadEyesLanguageProvider(event.getGenerator()));
+        var generator = event.getGenerator();
+        var fileHelper = event.getExistingFileHelper();
+        generator.addProvider(event.includeClient(), new BadEyesModelProviders.BadEyesItemModelProvider(generator, fileHelper));
+        generator.addProvider(event.includeClient(), new BadEyesLanguageProvider(generator));
 
-        event.getGenerator().addProvider(event.includeServer(), new BadEyesTagProviders.BadEyesItemTagProvider(event.getGenerator(), event.getExistingFileHelper()));
-        event.getGenerator().addProvider(event.includeServer(), new BadEyesRecipeProvider(event.getGenerator()));
+        generator.addProvider(event.includeServer(), new BadEyesTagProviders.BadEyesItemTagProvider(generator, fileHelper));
+        generator.addProvider(event.includeServer(), new BadEyesRecipeProvider(generator));
     }
 }
