@@ -1,13 +1,14 @@
 package dhyces.badeyes.datagen;
 
 import dhyces.badeyes.BadEyes;
-import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
 import net.minecraftforge.common.data.LanguageProvider;
 
 public class BadEyesLanguageProvider extends LanguageProvider {
 
-    public BadEyesLanguageProvider(DataGenerator gen) {
-        super(gen, BadEyes.MODID, "en_us");
+
+    public BadEyesLanguageProvider(PackOutput output, String modid, String locale) {
+        super(output, modid, locale);
     }
 
     @Override

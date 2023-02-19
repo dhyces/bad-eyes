@@ -14,8 +14,8 @@ public class FogRendererMixin {
     @Inject(method = "setupFog", at = @At("HEAD"), cancellable = true)
     private static void badeyes$setupFog(Camera camera, FogRenderer.FogMode fogMode, float viewDistance, boolean thickFog, float partialTicks, CallbackInfo ci) {
         if (BadEyesClient.localHasBadEyes()) {
-            RenderSystem.setShaderFogStart(0F);
-            RenderSystem.setShaderFogEnd(viewDistance);
+            RenderSystem.setShaderFogStart(-8.0f);
+            RenderSystem.setShaderFogEnd(10);
             ci.cancel();
         }
     }

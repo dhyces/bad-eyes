@@ -9,8 +9,10 @@ import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ModelEvent;
+import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -24,6 +26,14 @@ public class BadEyesClient {
     public static void init(IEventBus bus) {
         bus.addListener(BadEyesClient::registerAdditionalModels);
         bus.addListener(BadEyesClient::entityRendererAddLayers);
+        bus.addListener(BadEyesClient::addToTabs);
+    }
+
+    static void addToTabs(CreativeModeTabEvent.BuildContents event) {
+        if (event.getTab().equals(CreativeModeTabs.COMBAT)) {
+            event.accept(BadEyes.SIMPLE_GLASSES);
+            event.accept(BadEyes.NETHERITE_GLASSES);
+        }
     }
 
     static void registerAdditionalModels(ModelEvent.RegisterAdditional event) {
@@ -34,13 +44,17 @@ public class BadEyesClient {
     static void entityRendererAddLayers(EntityRenderersEvent.AddLayers event) {
         event.getSkins().forEach(skin -> {
             LivingEntityRenderer<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>> renderer = event.getSkin(skin);
-            renderer.addLayer(new GlassesRenderLayer(renderer));
+            renderer.addLayer(new GlassesRenderLayer<>(renderer));
         });
         for (EntityType<?> type : ForgeRegistries.ENTITY_TYPES.getValues()) {
             var renderer = Minecraft.getInstance().getEntityRenderDispatcher().renderers.get(type);
-            if (renderer instanceof LivingEntityRenderer livingEntityRenderer && livingEntityRenderer.getModel() instanceof HeadedModel) {
-                livingEntityRenderer.addLayer(new GlassesRenderLayer(livingEntityRenderer));
+            if (renderer instanceof LivingEntityRenderer<?, ?> livingEntityRenderer && livingEntityRenderer.getModel() instanceof HeadedModel) {
+                livingEntityRenderer.addLayer(cast(new GlassesRenderLayer<>(cast(livingEntityRenderer))));
             }
         }
+    }
+
+    private static <T> T cast(Object o) {
+        return (T) o;
     }
 }

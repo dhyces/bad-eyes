@@ -8,8 +8,7 @@
   ],
   "client": [
     "client.CustomHeadLayerMixin",
-    "client.FogRendererMixin",
-    "client.GameRendererMixin"
+    "client.FogRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

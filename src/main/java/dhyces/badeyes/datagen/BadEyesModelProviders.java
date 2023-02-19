@@ -1,7 +1,6 @@
 package dhyces.badeyes.datagen;
 
-import dhyces.badeyes.BadEyes;
-import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
@@ -9,8 +8,8 @@ public class BadEyesModelProviders {
 
     public static class BadEyesItemModelProvider extends ItemModelProvider {
 
-        public BadEyesItemModelProvider(DataGenerator generator, ExistingFileHelper existingFileHelper) {
-            super(generator, BadEyes.MODID, existingFileHelper);
+        public BadEyesItemModelProvider(PackOutput output, String modid, ExistingFileHelper existingFileHelper) {
+            super(output, modid, existingFileHelper);
         }
 
         @Override
