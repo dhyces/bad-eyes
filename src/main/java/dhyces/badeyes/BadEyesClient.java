@@ -36,9 +36,9 @@ public class BadEyesClient {
             LivingEntityRenderer<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>> renderer = event.getSkin(skin);
             renderer.addLayer(new GlassesRenderLayer(renderer));
         });
-        for (EntityType type : ForgeRegistries.ENTITY_TYPES.getValues()) {
+        for (EntityType<?> type : ForgeRegistries.ENTITY_TYPES.getValues()) {
             var renderer = Minecraft.getInstance().getEntityRenderDispatcher().renderers.get(type);
-            if (renderer != null && renderer instanceof LivingEntityRenderer livingEntityRenderer && livingEntityRenderer.getModel() instanceof HeadedModel) {
+            if (renderer instanceof LivingEntityRenderer livingEntityRenderer && livingEntityRenderer.getModel() instanceof HeadedModel) {
                 livingEntityRenderer.addLayer(new GlassesRenderLayer(livingEntityRenderer));
             }
         }
