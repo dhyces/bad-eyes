@@ -1,6 +1,8 @@
 package dhyces.badeyes.mixins;
 
 import dhyces.badeyes.BadEyes;
+import dhyces.badeyes.util.CuriosUtil;
+import dhyces.badeyes.util.GlassesSlot;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -19,21 +21,19 @@ public class InventoryMixin {
 
     @Final
     @Shadow
-    public NonNullList<ItemStack> armor;
-
-    @Final
-    @Shadow
     private Player player;
 
     @Inject(method = "hurtArmor", at = @At(value = "TAIL"))
     private void badeyes_hurtArmor(DamageSource pSource, float pDamage, int[] pArmorPieces, CallbackInfo ci) {
-        for (int i : pArmorPieces) {
-            if (i == EquipmentSlot.HEAD.getIndex()) {
-                ItemStack item = armor.get(EquipmentSlot.HEAD.getIndex());
-                if (item.is(BadEyes.GLASSES)) {
-                    item.hurtAndBreak((int)pDamage, player, player1 -> player1.broadcastBreakEvent(EquipmentSlot.HEAD));
+        GlassesSlot glassesSlot = BadEyes.getGlasses(player);
+        if (!glassesSlot.stack().isEmpty()) {
+            glassesSlot.stack().hurtAndBreak((int)pDamage, player, player1 -> {
+                if (glassesSlot.isCurio()) {
+                    CuriosUtil.onCuriosGlassesBreak(player1, glassesSlot.stack());
+                } else {
+                    player1.broadcastBreakEvent(EquipmentSlot.HEAD);
                 }
-            }
+            });
         }
     }
 }

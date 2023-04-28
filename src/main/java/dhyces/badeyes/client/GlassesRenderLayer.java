@@ -3,6 +3,7 @@ package dhyces.badeyes.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import dhyces.badeyes.BadEyes;
+import dhyces.badeyes.BadEyesClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.HeadedModel;
@@ -16,7 +17,6 @@ import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -32,8 +32,8 @@ public class GlassesRenderLayer<T extends LivingEntity, M extends EntityModel<T>
 
     @Override
     public void render(@NotNull PoseStack pPoseStack, @NotNull MultiBufferSource pBuffer, int pPackedLight, @NotNull T livingEntity, float pLimbSwing, float pLimbSwingAmount, float pPartialTick, float pAgeInTicks, float pNetHeadYaw, float pHeadPitch) {
-        if (BadEyes.hasGlasses(livingEntity)) {
-            ItemStack itemStack = livingEntity.getItemBySlot(EquipmentSlot.HEAD);
+        if (BadEyes.hasGlasses(livingEntity) && BadEyesClient.shouldLocalGlassesRender()) {
+            ItemStack itemStack = BadEyes.getGlasses(livingEntity).stack();
             ResourceLocation location = ForgeRegistries.ITEMS.getKey(itemStack.getItem());
             BakedModel glassesModel = Minecraft.getInstance().getModelManager().getModel(new ResourceLocation(location.getNamespace(), "entity/" + location.getPath()));
             pPoseStack.pushPose();

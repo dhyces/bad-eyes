@@ -1,6 +1,8 @@
 package dhyces.badeyes;
 
 import dhyces.badeyes.client.GlassesRenderLayer;
+import dhyces.badeyes.util.CuriosUtil;
+import dhyces.badeyes.util.GlassesSlot;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HeadedModel;
 import net.minecraft.client.model.PlayerModel;
@@ -9,9 +11,7 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.CreativeModeTabs;
-import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.event.CreativeModeTabEvent;
@@ -21,8 +21,13 @@ import net.minecraftforge.registries.ForgeRegistries;
 public class BadEyesClient {
 
     public static boolean localHasBadEyes() {
-        ItemStack headItem = Minecraft.getInstance().player.getInventory().armor.get(EquipmentSlot.HEAD.getIndex());
-        return headItem.isEmpty() || !headItem.is(BadEyes.GLASSES);
+        GlassesSlot glasses = BadEyes.getGlasses(Minecraft.getInstance().player);
+        return glasses.stack().isEmpty() || !glasses.stack().is(BadEyes.GLASSES);
+    }
+
+    public static boolean shouldLocalGlassesRender() {
+        GlassesSlot glasses = BadEyes.getGlasses(Minecraft.getInstance().player);
+        return glasses.isCurio() ? CuriosUtil.areGlassesVisible(Minecraft.getInstance().player) : !glasses.stack().isEmpty();
     }
 
     public static void init(IEventBus bus) {
