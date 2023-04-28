@@ -1,15 +1,26 @@
-modLoader="javafml" #mandatory
-loaderVersion="[41,)"
+modLoader="javafml"
+loaderVersion="[45,)"
 license="CC0"
-#issueTrackerURL="https://change.me.to.your.issue.tracker.example.invalid/" #optional
+issueTrackerURL="https://github.com/dhyces/bad-eyes/issues/"
 [[mods]]
-modId="badeyes" #mandatory
-version="${file.jarVersion}" #mandatory
+modId="badeyes"
+version="${file.jarVersion}"
 displayName="Bad Eyes"
 #updateJSONURL="https://change.me.example.invalid/updates.json"
-#displayURL="https://change.me.to.your.mods.homepage.example.invalid/"
+displayURL="https://www.curseforge.com/minecraft/mc-mods/bad-eyes/"
 logoFile="logo.png"
 authors="dhyces"
-description='''
-Near-sighted simulator
-'''
+description='''Near-sighted simulator'''
+
+[[dependencies.badeyes]]
+modId="forge"
+mandatory=true
+versionRange="[45,)"
+ordering="NONE"
+side="BOTH"
+[[dependencies.badeyes]]
+modId="minecraft"
+mandatory=true
+versionRange="[1.19.4,1.20)"
+ordering="NONE"
+side="BOTH"

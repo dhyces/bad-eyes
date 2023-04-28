@@ -9,7 +9,6 @@ import net.minecraft.client.model.HeadedModel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.CustomHeadLayer;
@@ -19,6 +18,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -39,7 +39,7 @@ public class GlassesRenderLayer<T extends LivingEntity, M extends EntityModel<T>
             pPoseStack.pushPose();
             getParentModel().getHead().translateAndRotate(pPoseStack);
             pPoseStack.translate(0.3125, -0.25, -0.35);
-            glassesModel = glassesModel.applyTransform(ItemTransforms.TransformType.HEAD, pPoseStack, false);
+            glassesModel = glassesModel.applyTransform(ItemDisplayContext.HEAD, pPoseStack, false);
             CustomHeadLayer.translateToHead(pPoseStack, false);
             PoseStack.Pose last = pPoseStack.last();
             for (RenderType renderType : glassesModel.getRenderTypes(itemStack, Minecraft.useShaderTransparency())) {

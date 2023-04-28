@@ -4,9 +4,12 @@ import dhyces.badeyes.datagen.BadEyesLanguageProvider;
 import dhyces.badeyes.datagen.BadEyesModelProviders;
 import dhyces.badeyes.datagen.BadEyesRecipeProvider;
 import dhyces.badeyes.datagen.BadEyesTagProviders;
+import dhyces.badeyes.datagen.onetwenty.BadEyesOneTwentyRecipeProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
+import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -55,16 +58,15 @@ public class BadEyes {
     private void datagen(final GatherDataEvent event) {
         DataGenerator generator = event.getGenerator();
         ExistingFileHelper fileHelper = event.getExistingFileHelper();
-        generator.addProvider(event.includeClient(), new BadEyesModelProviders.BadEyesItemModelProvider(generator.getPackOutput(), MODID, fileHelper));
-        generator.addProvider(event.includeClient(), new BadEyesLanguageProvider(generator.getPackOutput(), MODID, "en_us"));
+        PackOutput packOutput = generator.getPackOutput();
+        CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
+        generator.addProvider(event.includeClient(), new BadEyesModelProviders.BadEyesItemModelProvider(packOutput, MODID, fileHelper));
+        generator.addProvider(event.includeClient(), new BadEyesLanguageProvider(packOutput, MODID, "en_us"));
 
-        CompletableFuture<HolderLookup.Provider> future = CompletableFuture.supplyAsync(() -> RegistryAccess.EMPTY);
-        generator.addProvider(event.includeServer(), new BadEyesTagProviders.BadEyesItemTagProvider(generator.getPackOutput(), future, new BlockTagsProvider(generator.getPackOutput(), future, MODID, null) {
-            @Override
-            protected void addTags(HolderLookup.Provider pProvider) {
+        generator.addProvider(event.includeServer(), new BadEyesTagProviders.BadEyesItemTagProvider(packOutput, lookupProvider, CompletableFuture.supplyAsync(TagsProvider.TagLookup::empty), MODID, fileHelper));
+        generator.addProvider(event.includeServer(), new BadEyesRecipeProvider(packOutput));
 
-            }
-        }, MODID, fileHelper));
-        generator.addProvider(event.includeServer(), new BadEyesRecipeProvider(generator.getPackOutput()));
+        DataGenerator.PackGenerator oneTwentyPackGenerator = generator.getBuiltinDatapack(true, "update_1_20");
+        oneTwentyPackGenerator.addProvider(BadEyesOneTwentyRecipeProvider::new);
     }
 }

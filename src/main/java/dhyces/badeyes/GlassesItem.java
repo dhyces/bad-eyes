@@ -7,12 +7,12 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.Equipable;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Wearable;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.DispenserBlock;
 import org.jetbrains.annotations.NotNull;
@@ -20,9 +20,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
 
-public class GlassesItem extends Item implements Wearable {
+public class GlassesItem extends Item implements Equipable {
 
-    final Supplier<TagKey<Item>> repairMaterials;
+    private final Supplier<TagKey<Item>> repairMaterials;
 
     public GlassesItem(Properties pProperties, Supplier<TagKey<Item>> repairTag) {
         super(pProperties);
@@ -33,7 +33,7 @@ public class GlassesItem extends Item implements Wearable {
     @Override
     public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level pLevel, Player pPlayer, @NotNull InteractionHand pUsedHand) {
         ItemStack item = pPlayer.getItemInHand(pUsedHand);
-        EquipmentSlot slot = Mob.getEquipmentSlotForItem(item);
+        EquipmentSlot slot = LivingEntity.getEquipmentSlotForItem(item);
         ItemStack slotItem = pPlayer.getItemBySlot(slot);
         if (slotItem.isEmpty()) {
             pPlayer.setItemSlot(slot, item.copy());
@@ -46,21 +46,28 @@ public class GlassesItem extends Item implements Wearable {
     }
 
     @Override
-    public boolean isValidRepairItem(ItemStack pStack, ItemStack pRepairCandidate) {
+    public boolean isValidRepairItem(ItemStack pStack, @NotNull ItemStack pRepairCandidate) {
         if (pStack.getItem() instanceof GlassesItem item) {
             return pRepairCandidate.is(item.repairMaterials.get());
         }
         return false;
     }
 
-    @Nullable
+    @NotNull
+    @Override
+    public EquipmentSlot getEquipmentSlot() {
+        return EquipmentSlot.HEAD;
+    }
+
+    @NotNull
     @Override
     public SoundEvent getEquipSound() {
         return SoundEvents.ARMOR_EQUIP_CHAIN;
     }
 
+    @Nullable
     @Override
-    public @Nullable EquipmentSlot getEquipmentSlot(ItemStack stack) {
-        return EquipmentSlot.HEAD;
+    public EquipmentSlot getEquipmentSlot(ItemStack stack) {
+        return getEquipmentSlot();
     }
 }
