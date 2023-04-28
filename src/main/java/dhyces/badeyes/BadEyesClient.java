@@ -5,11 +5,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HeadedModel;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.event.CreativeModeTabEvent;
@@ -19,7 +21,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 public class BadEyesClient {
 
     public static boolean localHasBadEyes() {
-        var headItem = Minecraft.getInstance().player.getInventory().armor.get(EquipmentSlot.HEAD.getIndex());
+        ItemStack headItem = Minecraft.getInstance().player.getInventory().armor.get(EquipmentSlot.HEAD.getIndex());
         return headItem.isEmpty() || !headItem.is(BadEyes.GLASSES);
     }
 
@@ -47,7 +49,7 @@ public class BadEyesClient {
             renderer.addLayer(new GlassesRenderLayer<>(renderer));
         });
         for (EntityType<?> type : ForgeRegistries.ENTITY_TYPES.getValues()) {
-            var renderer = Minecraft.getInstance().getEntityRenderDispatcher().renderers.get(type);
+            EntityRenderer<?> renderer = Minecraft.getInstance().getEntityRenderDispatcher().renderers.get(type);
             if (renderer instanceof LivingEntityRenderer<?, ?> livingEntityRenderer && livingEntityRenderer.getModel() instanceof HeadedModel) {
                 livingEntityRenderer.addLayer(cast(new GlassesRenderLayer<>(cast(livingEntityRenderer))));
             }

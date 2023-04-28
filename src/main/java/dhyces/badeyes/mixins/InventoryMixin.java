@@ -26,12 +26,12 @@ public class InventoryMixin {
     private Player player;
 
     @Inject(method = "hurtArmor", at = @At(value = "TAIL"))
-    private void hurtArmor(DamageSource p_150073_, float p_150074_, int[] p_150075_, CallbackInfo ci) {
-        for (int i : p_150075_) {
+    private void badeyes_hurtArmor(DamageSource pSource, float pDamage, int[] pArmorPieces, CallbackInfo ci) {
+        for (int i : pArmorPieces) {
             if (i == EquipmentSlot.HEAD.getIndex()) {
-                var item = armor.get(EquipmentSlot.HEAD.getIndex());
+                ItemStack item = armor.get(EquipmentSlot.HEAD.getIndex());
                 if (item.is(BadEyes.GLASSES)) {
-                    item.hurtAndBreak((int)p_150074_, player, player1 -> player1.broadcastBreakEvent(EquipmentSlot.HEAD));
+                    item.hurtAndBreak((int)pDamage, player, player1 -> player1.broadcastBreakEvent(EquipmentSlot.HEAD));
                 }
             }
         }

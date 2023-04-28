@@ -6,13 +6,16 @@ import dhyces.badeyes.datagen.BadEyesRecipeProvider;
 import dhyces.badeyes.datagen.BadEyesTagProviders;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.data.DataGenerator;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.common.data.BlockTagsProvider;
+import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.data.event.GatherDataEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLLoader;
@@ -33,7 +36,7 @@ public class BadEyes {
     public static final RegistryObject<Item> NETHERITE_GLASSES = ITEM_REGISTER.register("netherite_glasses", () -> new GlassesItem(new Item.Properties().durability(1000).fireResistant(), () -> GLASSES_REPAIR_MATERIALS));
 
     public BadEyes() {
-        var modbus = FMLJavaModLoadingContext.get().getModEventBus();
+        IEventBus modbus = FMLJavaModLoadingContext.get().getModEventBus();
         ITEM_REGISTER.register(modbus);
 
         if (FMLLoader.getDist().isClient()) {
@@ -49,9 +52,9 @@ public class BadEyes {
         return entity.getItemBySlot(EquipmentSlot.HEAD).is(BadEyes.GLASSES);
     }
 
-    private void datagen(GatherDataEvent event) {
-        var generator = event.getGenerator();
-        var fileHelper = event.getExistingFileHelper();
+    private void datagen(final GatherDataEvent event) {
+        DataGenerator generator = event.getGenerator();
+        ExistingFileHelper fileHelper = event.getExistingFileHelper();
         generator.addProvider(event.includeClient(), new BadEyesModelProviders.BadEyesItemModelProvider(generator.getPackOutput(), MODID, fileHelper));
         generator.addProvider(event.includeClient(), new BadEyesLanguageProvider(generator.getPackOutput(), MODID, "en_us"));
 

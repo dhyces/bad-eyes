@@ -32,9 +32,9 @@ public class GlassesItem extends Item implements Wearable {
 
     @Override
     public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level pLevel, Player pPlayer, @NotNull InteractionHand pUsedHand) {
-        var item = pPlayer.getItemInHand(pUsedHand);
-        var slot = Mob.getEquipmentSlotForItem(item);
-        var slotItem = pPlayer.getItemBySlot(slot);
+        ItemStack item = pPlayer.getItemInHand(pUsedHand);
+        EquipmentSlot slot = Mob.getEquipmentSlotForItem(item);
+        ItemStack slotItem = pPlayer.getItemBySlot(slot);
         if (slotItem.isEmpty()) {
             pPlayer.setItemSlot(slot, item.copy());
             if (!pLevel.isClientSide)

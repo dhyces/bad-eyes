@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(value = FogRenderer.class, priority = 1050)
 public class FogRendererMixin {
     @Inject(method = "setupFog", at = @At("HEAD"), cancellable = true)
-    private static void badeyes$setupFog(Camera camera, FogRenderer.FogMode fogMode, float viewDistance, boolean thickFog, float partialTicks, CallbackInfo ci) {
+    private static void badeyes_setupFog(Camera camera, FogRenderer.FogMode fogMode, float viewDistance, boolean thickFog, float partialTicks, CallbackInfo ci) {
         if (BadEyesClient.localHasBadEyes()) {
             RenderSystem.setShaderFogStart(-8.0f);
             RenderSystem.setShaderFogEnd(10);

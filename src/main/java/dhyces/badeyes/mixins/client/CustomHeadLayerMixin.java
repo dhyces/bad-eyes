@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class CustomHeadLayerMixin {
 
     @Inject(method = "render(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/world/entity/Entity;FFFFFF)V", at = @At("HEAD"), cancellable = true)
-    private void badeyes$render(PoseStack par1, MultiBufferSource par2, int par3, Entity par4, float par5, float par6, float par7, float par8, float par9, float par10, CallbackInfo ci) {
+    private void badeyes_render(PoseStack par1, MultiBufferSource par2, int par3, Entity par4, float par5, float par6, float par7, float par8, float par9, float par10, CallbackInfo ci) {
         if (par4 instanceof LivingEntity livingEntity) {
             if (BadEyes.hasGlasses(livingEntity))
                 ci.cancel();
