@@ -32,10 +32,9 @@ public class GlassesRenderLayer<T extends LivingEntity, M extends EntityModel<T>
 
     @Override
     public void render(@NotNull PoseStack pPoseStack, @NotNull MultiBufferSource pBuffer, int pPackedLight, @NotNull T livingEntity, float pLimbSwing, float pLimbSwingAmount, float pPartialTick, float pAgeInTicks, float pNetHeadYaw, float pHeadPitch) {
-        if (BadEyes.hasGlasses(livingEntity) && BadEyesClient.shouldLocalGlassesRender()) {
+        if (BadEyesClient.shouldLocalGlassesRender()) {
             ItemStack itemStack = BadEyes.getGlasses(livingEntity).stack();
-            ResourceLocation location = ForgeRegistries.ITEMS.getKey(itemStack.getItem());
-            BakedModel glassesModel = Minecraft.getInstance().getModelManager().getModel(new ResourceLocation(location.getNamespace(), "entity/" + location.getPath()));
+            BakedModel glassesModel = getGlassesModel(itemStack, livingEntity);
             pPoseStack.pushPose();
             getParentModel().getHead().translateAndRotate(pPoseStack);
             pPoseStack.translate(0.3125, -0.25, -0.35);
@@ -50,5 +49,10 @@ public class GlassesRenderLayer<T extends LivingEntity, M extends EntityModel<T>
             }
             pPoseStack.popPose();
         }
+    }
+
+    protected BakedModel getGlassesModel(ItemStack glasses, LivingEntity livingEntity) {
+        ResourceLocation location = ForgeRegistries.ITEMS.getKey(glasses.getItem());
+        return Minecraft.getInstance().getModelManager().getModel(new ResourceLocation(location.getNamespace(), "entity/" + location.getPath()));
     }
 }

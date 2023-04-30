@@ -5,6 +5,9 @@ import dhyces.badeyes.datagen.BadEyesModelProviders;
 import dhyces.badeyes.datagen.BadEyesRecipeProvider;
 import dhyces.badeyes.datagen.BadEyesTagProviders;
 import dhyces.badeyes.datagen.onetwenty.BadEyesOneTwentyRecipeProvider;
+import dhyces.badeyes.network.Networking;
+import dhyces.badeyes.network.packets.DisableShaderPacket;
+import dhyces.badeyes.network.packets.EnableShaderPacket;
 import dhyces.badeyes.util.CuriosUtil;
 import dhyces.badeyes.util.GlassesSlot;
 import net.minecraft.core.HolderLookup;
@@ -13,14 +16,18 @@ import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.data.BlockTagsProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.data.event.GatherDataEvent;
+import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.ModList;
@@ -50,10 +57,16 @@ public class BadEyes {
 
     public BadEyes() {
         IEventBus modbus = FMLJavaModLoadingContext.get().getModEventBus();
+        IEventBus forgeBus = MinecraftForge.EVENT_BUS;
         ITEM_REGISTER.register(modbus);
 
+        forgeBus.addListener(this::playerGlassesEquipment);
+        forgeBus.addListener(this::playerRespawn);
+
+        Networking.register();
+
         if (FMLLoader.getDist().isClient()) {
-            BadEyesClient.init(modbus);
+            BadEyesClient.init(modbus, forgeBus);
         }
 
         if (FMLLoader.getLaunchHandler().isData()) {
@@ -61,12 +74,26 @@ public class BadEyes {
         }
 
         if (ModList.get().isLoaded("curios")) {
-            modbus.addListener(this::curiosIMCEvent);
+            CuriosUtil.addListeners(modbus, forgeBus);
         }
     }
 
-    private void curiosIMCEvent(final InterModEnqueueEvent event) {
-        InterModComms.sendTo("curios", SlotTypeMessage.REGISTER_TYPE, () -> SlotTypePreset.HEAD.getMessageBuilder().build());
+    private void playerGlassesEquipment(final LivingEquipmentChangeEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player && event.getSlot() == EquipmentSlot.HEAD) {
+            if (event.getTo().is(BadEyes.GLASSES)) {
+                Networking.sendMessageToPlayer(player, new DisableShaderPacket());
+            } else if (event.getFrom().is(BadEyes.GLASSES)) {
+                Networking.sendMessageToPlayer(player, new EnableShaderPacket());
+            }
+        }
+    }
+
+    private void playerRespawn(final PlayerEvent.PlayerRespawnEvent event) {
+        if (!event.isEndConquered()) {
+            if (!hasGlasses(event.getEntity())) {
+                Networking.sendMessageToPlayer((ServerPlayer) event.getEntity(), new EnableShaderPacket());
+            }
+        }
     }
 
     public static boolean hasGlasses(LivingEntity entity) {
