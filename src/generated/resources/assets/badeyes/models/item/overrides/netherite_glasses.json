@@ -1,0 +1,54 @@
+{
+  "values": [
+    {
+      "type": "trimmed:trim",
+      "material": "minecraft:copper",
+      "model": "badeyes:netherite_glasses_copper_trim"
+    },
+    {
+      "type": "trimmed:trim",
+      "material": "minecraft:iron",
+      "model": "badeyes:netherite_glasses_iron_trim"
+    },
+    {
+      "type": "trimmed:trim",
+      "material": "minecraft:gold",
+      "model": "badeyes:netherite_glasses_gold_trim"
+    },
+    {
+      "type": "trimmed:trim",
+      "material": "minecraft:diamond",
+      "model": "badeyes:netherite_glasses_diamond_trim"
+    },
+    {
+      "type": "trimmed:trim",
+      "material": "minecraft:netherite",
+      "model": "badeyes:netherite_glasses_netherite_trim"
+    },
+    {
+      "type": "trimmed:trim",
+      "material": "minecraft:emerald",
+      "model": "badeyes:netherite_glasses_emerald_trim"
+    },
+    {
+      "type": "trimmed:trim",
+      "material": "minecraft:amethyst",
+      "model": "badeyes:netherite_glasses_amethyst_trim"
+    },
+    {
+      "type": "trimmed:trim",
+      "material": "minecraft:lapis",
+      "model": "badeyes:netherite_glasses_lapis_trim"
+    },
+    {
+      "type": "trimmed:trim",
+      "material": "minecraft:quartz",
+      "model": "badeyes:netherite_glasses_quartz_trim"
+    },
+    {
+      "type": "trimmed:trim",
+      "material": "minecraft:redstone",
+      "model": "badeyes:netherite_glasses_redstone_trim"
+    }
+  ]
+}

@@ -5,43 +5,49 @@ import dhyces.badeyes.datagen.BadEyesModelProviders;
 import dhyces.badeyes.datagen.BadEyesRecipeProvider;
 import dhyces.badeyes.datagen.BadEyesTagProviders;
 import dhyces.badeyes.datagen.onetwenty.BadEyesOneTwentyRecipeProvider;
+import dhyces.badeyes.datagen.onetwenty.ClientTagsProvider;
+import dhyces.badeyes.datagen.onetwenty.ItemOverrideProvider;
+import dhyces.badeyes.datagen.onetwenty.OneTwentyItemTagProvider;
 import dhyces.badeyes.network.Networking;
 import dhyces.badeyes.network.packets.DisableShaderPacket;
 import dhyces.badeyes.network.packets.EnableShaderPacket;
 import dhyces.badeyes.util.CuriosUtil;
 import dhyces.badeyes.util.GlassesSlot;
+import dhyces.badeyes.util.PackGenCreator;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
+import net.minecraft.data.metadata.PackMetadataGenerator;
 import net.minecraft.data.tags.TagsProvider;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.PathPackResources;
+import net.minecraft.server.packs.repository.Pack;
+import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.flag.FeatureFlagSet;
+import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.data.BlockTagsProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.data.event.GatherDataEvent;
+import net.minecraftforge.event.AddPackFindersEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
-import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.SlotResult;
-import top.theillusivec4.curios.api.SlotTypeMessage;
-import top.theillusivec4.curios.api.SlotTypePreset;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -49,6 +55,10 @@ import java.util.concurrent.CompletableFuture;
 public class BadEyes {
 
     public static final String MODID = "badeyes";
+    public static ResourceLocation id(String id) {
+        return new ResourceLocation(MODID, id);
+    }
+
     public static final TagKey<Item> GLASSES = TagKey.create(ForgeRegistries.Keys.ITEMS, new ResourceLocation(MODID, "glasses"));
     public static final TagKey<Item> GLASSES_REPAIR_MATERIALS = TagKey.create(ForgeRegistries.Keys.ITEMS, new ResourceLocation(MODID, "glasses_repair_materials"));
     static final DeferredRegister<Item> ITEM_REGISTER = DeferredRegister.create(ForgeRegistries.Keys.ITEMS, BadEyes.MODID);
@@ -59,6 +69,7 @@ public class BadEyes {
         IEventBus modbus = FMLJavaModLoadingContext.get().getModEventBus();
         IEventBus forgeBus = MinecraftForge.EVENT_BUS;
         ITEM_REGISTER.register(modbus);
+        modbus.addListener(this::addBuiltInPack);
 
         forgeBus.addListener(this::playerGlassesEquipment);
         forgeBus.addListener(this::playerRespawn);
@@ -96,6 +107,24 @@ public class BadEyes {
         }
     }
 
+    private void addBuiltInPack(final AddPackFindersEvent event) {
+        if (event.getPackType() == PackType.SERVER_DATA) {
+            event.addRepositorySource(pOnLoad -> {
+                pOnLoad.accept(
+                        Pack.readMetaAndCreate("one_twenty", Component.literal("One Twenty Fixes"), false, pId -> {
+                                    return new PathPackResources(pId, ModList.get().getModFileById(MODID).getFile().findResource("data/badeyes/datapacks/" + pId), true);
+                                },
+                                PackType.SERVER_DATA, Pack.Position.TOP, optionalFeatureSource()
+                        )
+                );
+            });
+        }
+    }
+
+    private PackSource optionalFeatureSource() {
+        return PackSource.create(component -> Component.translatable("pack.nameAndSource", component, Component.translatable("pack.source.feature")), false);
+    }
+
     public static boolean hasGlasses(LivingEntity entity) {
         return entity.getItemBySlot(EquipmentSlot.HEAD).is(BadEyes.GLASSES) || (ModList.get().isLoaded("curios") && CuriosUtil.getGlasses(entity).isPresent());
     }
@@ -117,11 +146,15 @@ public class BadEyes {
         CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
         generator.addProvider(event.includeClient(), new BadEyesModelProviders.BadEyesItemModelProvider(packOutput, MODID, fileHelper));
         generator.addProvider(event.includeClient(), new BadEyesLanguageProvider(packOutput, MODID, "en_us"));
+        generator.addProvider(event.includeClient(), new ItemOverrideProvider(packOutput));
+        generator.addProvider(event.includeClient(), new ClientTagsProvider(packOutput, fileHelper));
 
         generator.addProvider(event.includeServer(), new BadEyesTagProviders.BadEyesItemTagProvider(packOutput, lookupProvider, CompletableFuture.supplyAsync(TagsProvider.TagLookup::empty), MODID, fileHelper));
         generator.addProvider(event.includeServer(), new BadEyesRecipeProvider(packOutput));
 
-        DataGenerator.PackGenerator oneTwentyPackGenerator = generator.getBuiltinDatapack(true, "update_1_20");
+        DataGenerator.PackGenerator oneTwentyPackGenerator = PackGenCreator.getAs(generator).createPackGenerator(true, PackOutput.Target.DATA_PACK, BadEyes.MODID, "one_twenty");
+        oneTwentyPackGenerator.addProvider(output -> PackMetadataGenerator.forFeaturePack(output, Component.literal("Fixes the mod for 1.20 and adds trims to glasses"), FeatureFlagSet.of(FeatureFlags.UPDATE_1_20)));
         oneTwentyPackGenerator.addProvider(BadEyesOneTwentyRecipeProvider::new);
+        oneTwentyPackGenerator.addProvider(output -> new OneTwentyItemTagProvider(output, lookupProvider, fileHelper));
     }
 }

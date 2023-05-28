@@ -1,0 +1,13 @@
+{
+  "features": {
+    "enabled": [
+      "minecraft:update_1_20"
+    ]
+  },
+  "pack": {
+    "description": {
+      "text": "Fixes the mod for 1.20 and adds trims to glasses"
+    },
+    "pack_format": 12
+  }
+}

@@ -24,6 +24,8 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 minecraft {
     mappings channel: "${mappings_id}", version: "${mappings_version}"
 
+    accessTransformer = file("src/main/resources/META-INF/accesstransformer.cfg")
+
     runs {
         client {
             workingDirectory project.file('run')
@@ -65,6 +67,7 @@ mixin {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
+    mavenLocal()
     maven {
         url = "https://maven.theillusivec4.top/"
     }
@@ -75,6 +78,9 @@ dependencies {
 
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
     compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
+
+    implementation fg.deobf("dev.dhyces.trimmed:trimmed-common-1.19.4:1.1.0")
+    implementation fg.deobf("dev.dhyces.trimmed:trimmed-forge-1.19.4:1.1.0")
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
