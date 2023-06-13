@@ -5,7 +5,8 @@ import dhyces.badeyes.client.GlassesRenderLayer;
 import dhyces.badeyes.client.model.GroupedModel;
 import dhyces.badeyes.util.CuriosUtil;
 import dhyces.badeyes.util.GlassesSlot;
-import dhyces.trimmed.api.TrimmedApi;
+import dhyces.trimmed.api.TrimmedClientMapApi;
+import dhyces.trimmed.api.TrimmedClientTagApi;
 import dhyces.trimmed.impl.client.maps.ClientMapKey;
 import dhyces.trimmed.impl.client.maps.ClientRegistryMapKey;
 import dhyces.trimmed.impl.client.tags.ClientTagKey;
@@ -25,7 +26,7 @@ import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.event.CreativeModeTabEvent;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -42,7 +43,7 @@ public class BadEyesClient {
     public static final ClientRegistryMapKey<Item> ITEM_LENS_SUFFIXES = ClientRegistryMapKey.of(Registries.ITEM, BadEyes.id("item_lens_suffixes"));
 
     public static String itemBasedSuffix(Item item) {
-        return TrimmedApi.MAP_API.getSafeRegistryClientMap(ITEM_LENS_SUFFIXES).map(itemStringMap -> itemStringMap.get(item)).orElse("simple");
+        return TrimmedClientMapApi.INSTANCE.map(ITEM_LENS_SUFFIXES).getOrDefault(item, "simple");
     }
 
     public static boolean localHasBadEyes() {
@@ -67,15 +68,15 @@ public class BadEyesClient {
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, spec);
     }
 
-    private static void addToTabs(CreativeModeTabEvent.BuildContents event) {
-        if (event.getTab() == CreativeModeTabs.COMBAT) {
+    private static void addToTabs(BuildCreativeModeTabContentsEvent event) {
+        if (event.getTabKey() == CreativeModeTabs.COMBAT) {
             event.accept(BadEyes.SIMPLE_GLASSES);
             event.accept(BadEyes.NETHERITE_GLASSES);
         }
     }
 
     private static void registerAdditionalModels(ModelEvent.RegisterAdditional event) {
-        TrimmedApi.TAG_API.getUncheckedTag(ADDITIONAL_MODELS).forEach(optionalId -> {
+        TrimmedClientTagApi.INSTANCE.getUncheckedTag(ADDITIONAL_MODELS).forEach(optionalId -> {
             event.register(optionalId.elementId());
         });
     }

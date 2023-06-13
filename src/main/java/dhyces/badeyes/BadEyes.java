@@ -1,8 +1,6 @@
 package dhyces.badeyes;
 
 import dhyces.badeyes.datagen.*;
-import dhyces.badeyes.datagen.onetwenty.BadEyesOneTwentyRecipeProvider;
-import dhyces.badeyes.datagen.onetwenty.OneTwentyItemTagProvider;
 import dhyces.badeyes.network.Networking;
 import dhyces.badeyes.network.packets.DisableShaderPacket;
 import dhyces.badeyes.network.packets.EnableShaderPacket;
@@ -11,7 +9,6 @@ import dhyces.badeyes.util.GlassesSlot;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.metadata.PackMetadataGenerator;
 import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -23,8 +20,6 @@ import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.flag.FeatureFlagSet;
-import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
@@ -152,11 +147,6 @@ public class BadEyes {
 
         generator.addProvider(event.includeServer(), new BadEyesTagProviders.BadEyesItemTagProvider(packOutput, lookupProvider, CompletableFuture.supplyAsync(TagsProvider.TagLookup::empty), MODID, fileHelper));
         generator.addProvider(event.includeServer(), new BadEyesRecipeProvider(packOutput));
-
-        DataGenerator.PackGenerator oneTwentyPackGenerator = createPackGenerator(generator, packOutput, true, PackOutput.Target.DATA_PACK, BadEyes.MODID, "one_twenty");
-        oneTwentyPackGenerator.addProvider(output -> PackMetadataGenerator.forFeaturePack(output, Component.literal("Fixes the mod for 1.20 and adds trims to glasses"), FeatureFlagSet.of(FeatureFlags.UPDATE_1_20)));
-        oneTwentyPackGenerator.addProvider(BadEyesOneTwentyRecipeProvider::new);
-        oneTwentyPackGenerator.addProvider(output -> new OneTwentyItemTagProvider(output, lookupProvider, fileHelper));
     }
 
     private DataGenerator.PackGenerator createPackGenerator(DataGenerator generator, PackOutput packOutput, boolean toRun, PackOutput.Target target, String namespace, String prefix) {

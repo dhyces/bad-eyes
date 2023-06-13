@@ -18,6 +18,6 @@ public class BadEyesRecipeProvider extends RecipeProvider {
     @Override
     protected void buildRecipes(Consumer<FinishedRecipe> pWriter) {
         ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, BadEyes.SIMPLE_GLASSES.get()).define('I', Tags.Items.NUGGETS_IRON).define('G', Tags.Items.GLASS_PANES).pattern("I I").pattern("GIG").unlockedBy(getHasName(BadEyes.SIMPLE_GLASSES.get()), has(BadEyes.SIMPLE_GLASSES.get())).save(pWriter);
-        LegacyUpgradeRecipeBuilder.smithing(Ingredient.of(BadEyes.SIMPLE_GLASSES.get()), Ingredient.of(Items.NETHERITE_INGOT), RecipeCategory.COMBAT, BadEyes.NETHERITE_GLASSES.get()).unlocks("has_netherite_ingot", has(Items.NETHERITE_INGOT)).save(pWriter, BadEyes.MODID + ":" + getItemName(BadEyes.NETHERITE_GLASSES.get()) + "_smithing");
+        SmithingTransformRecipeBuilder.smithing(Ingredient.of(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE), Ingredient.of(BadEyes.SIMPLE_GLASSES.get()), Ingredient.of(Items.NETHERITE_INGOT), RecipeCategory.COMBAT, BadEyes.NETHERITE_GLASSES.get()).unlocks("has_netherite_ingot", has(Items.NETHERITE_INGOT)).save(pWriter, BadEyes.MODID + ":" + getItemName(BadEyes.NETHERITE_GLASSES.get()) + "_smithing");
     }
 }
