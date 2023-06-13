@@ -1,0 +1,74 @@
+{
+	"loader": "badeyes:grouped",
+	"credit": "Made with Blockbench",
+	"render_type": "translucent",
+	"elements": [
+		{
+			"from": [1, 0, 0],
+			"to": [15, 7, 0.001],
+			"faces": {
+				"north": {"uv": [0, 0, 14, 7], "texture": "#lens"},
+				"south": {"uv": [0, 0, 14, 7], "texture": "#lens"}
+			}
+		},
+		{
+			"from": [1, 0, 0],
+			"to": [1.001, 7, 14],
+			"faces": {
+				"east": {"uv": [0, 7, 14, 14], "texture": "#frame"},
+				"west": {"uv": [14, 7, 0, 14], "texture": "#frame"}
+			}
+		},
+		{
+			"from": [15, 0, 0],
+			"to": [15.001, 7, 14],
+			"faces": {
+				"east": {"uv": [0, 7, 14, 14], "texture": "#frame"},
+				"west": {"uv": [14, 7, 0, 14], "texture": "#frame"}
+			}
+		},
+		{
+			"from": [1, 0, 0],
+			"to": [15, 7, 0.002],
+			"faces": {
+				"north": {"uv": [0, 0, 14, 7], "texture": "#frame"},
+				"south": {"uv": [0, 0, 14, 7], "texture": "#frame"}
+			}
+		},
+		{
+			"from": [1, 0, 0],
+			"to": [1.002, 7, 14],
+			"faces": {
+				"east": {"uv": [0, 7, 14, 14], "texture": "#frame"},
+				"west": {"uv": [14, 7, 0, 14], "texture": "#frame"}
+			}
+		},
+		{
+			"from": [15, 0, 0],
+			"to": [15.002, 7, 14],
+			"faces": {
+				"east": {"uv": [0, 7, 14, 14], "texture": "#frame"},
+				"west": {"uv": [14, 7, 0, 14], "texture": "#frame"}
+			}
+		}
+	],
+	"display": {
+		"head": {
+			"translation": [0, 6, 1]
+		}
+	},
+	"groups": [
+		{
+			"name": "lens",
+			"origin": [0, 0, 0],
+			"color": 0,
+			"children": [0, 1, 2]
+		},
+		{
+			"name": "frame",
+			"origin": [0, 0, 0],
+			"color": 0,
+			"children": [3, 4, 5]
+		}
+	]
+}

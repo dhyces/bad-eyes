@@ -1,2 +1,5 @@
-// 1.19.4	2023-05-28T16:15:32.1193097	ClientTagDataProvider for badeyes
-b3758ce1939868a0a03b88af65fe03192f2e504c assets/trimmed/tags/unchecked/custom_armor_trim_item_textures.json
+// 1.19.4	2023-06-02T23:05:43.6760256	ClientTagDataProvider for badeyes
+6c097dad599d9f90badf3dd90a684b0369e9e7e8 assets/badeyes/tags/unchecked/additional_models.json
+f401c9164e177bac958c213555495effa5336bea assets/badeyes/tags/unchecked/lens_shapes.json
+e86c6360337f7b34ac177461aa75448b3615ed78 assets/trimmed/tags/unchecked/custom_armor_trim_item_textures.json
+4216d6811d4f21d2e2d63bff730cfac605ddbd6b assets/trimmed/tags/unchecked/custom_armor_trim_pattern_textures.json

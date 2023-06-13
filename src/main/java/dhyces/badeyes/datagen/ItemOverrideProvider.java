@@ -1,4 +1,4 @@
-package dhyces.badeyes.datagen.onetwenty;
+package dhyces.badeyes.datagen;
 
 import dhyces.badeyes.BadEyes;
 import dhyces.trimmed.api.data.ItemOverrideDataProvider;

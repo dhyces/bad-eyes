@@ -1,0 +1,9 @@
+{
+	"credit": "Made with Blockbench",
+	"parent": "badeyes:armor/glasses",
+	"textures": {
+		"frame": "badeyes:armor/netherite_frame",
+		"lens": "badeyes:armor/netherite_lens",
+		"particle": "badeyes:armor/netherite_frame"
+	}
+}

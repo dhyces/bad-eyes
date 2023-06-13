@@ -14,7 +14,7 @@ public final class ClientConfig {
 
     public static ForgeConfigSpec build() {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
-        blurShader = builder.define("blurShader", "none");
+        blurShader = builder.comment("The shader used for the blur. Options are 'none', 'badeyes:box_blur', and 'badeyes:linear_blur' ").define("blurShader", "badeyes:box_blur");
         return builder.build();
     }
 }

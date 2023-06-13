@@ -1,0 +1,9 @@
+{
+	"credit": "Made with Blockbench",
+	"parent": "badeyes:armor/glasses",
+	"textures": {
+		"frame": "badeyes:armor/simple_frame",
+		"lens": "badeyes:armor/simple_lens",
+		"particle": "badeyes:armor/simple_frame"
+	}
+}

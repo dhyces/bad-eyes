@@ -6,9 +6,8 @@ import net.minecraftforge.common.data.LanguageProvider;
 
 public class BadEyesLanguageProvider extends LanguageProvider {
 
-
-    public BadEyesLanguageProvider(PackOutput output, String modid, String locale) {
-        super(output, modid, locale);
+    public BadEyesLanguageProvider(PackOutput output, String locale) {
+        super(output, BadEyes.MODID, locale);
     }
 
     @Override

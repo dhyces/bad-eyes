@@ -1,0 +1,10 @@
+{
+  "sources": [
+    {
+      "type": "trimmed:open_paletted_permutations",
+      "palette_key": "badeyes:lens/colors/palette",
+      "permutations": "badeyes:lens_colors",
+      "textures": "badeyes:lens_shapes"
+    }
+  ]
+}

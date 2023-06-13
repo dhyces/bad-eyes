@@ -1,0 +1,61 @@
+{
+	"format_version": "1.12.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.unknown",
+				"texture_width": 16,
+				"texture_height": 16,
+				"visible_bounds_width": 2,
+				"visible_bounds_height": 1.5,
+				"visible_bounds_offset": [0, 0.25, 0]
+			},
+			"bones": [
+				{
+					"name": "frames",
+					"pivot": [0, 0, 0],
+					"cubes": [
+						{
+							"origin": [-7, 0, -8],
+							"size": [14, 7, 0.002],
+							"uv": {
+								"north": {"uv": [0, 0], "uv_size": [14, 7]},
+								"south": {"uv": [0, 0], "uv_size": [14, 7]}
+							}
+						},
+						{
+							"origin": [6.999, 0, -8],
+							"size": [0.001, 7, 11],
+							"uv": {
+								"east": {"uv": [14, 7], "uv_size": [-14, 7]},
+								"west": {"uv": [0, 7], "uv_size": [14, 7]}
+							}
+						},
+						{
+							"origin": [-7.001, 0, -8],
+							"size": [0.001, 7, 11],
+							"uv": {
+								"east": {"uv": [14, 7], "uv_size": [-14, 7]},
+								"west": {"uv": [0, 7], "uv_size": [14, 7]}
+							}
+						}
+					]
+				},
+				{
+					"name": "lens",
+					"pivot": [0, 0, 0],
+					"cubes": [
+						{
+							"origin": [-7, 0, -8],
+							"size": [14, 7, 0.001],
+							"uv": {
+								"north": {"uv": [0, 0], "uv_size": [14, 7]},
+								"south": {"uv": [0, 0], "uv_size": [14, 7]}
+							}
+						}
+					]
+				}
+			]
+		}
+	]
+}

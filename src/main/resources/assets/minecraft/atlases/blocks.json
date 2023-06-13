@@ -2,11 +2,19 @@
   "sources": [
     {
       "type": "single",
-      "resource": "badeyes:armor/simple_glasses"
+      "resource": "badeyes:armor/simple_frame"
     },
     {
       "type": "single",
-      "resource": "badeyes:armor/netherite_glasses"
+      "resource": "badeyes:armor/netherite_frame"
+    },
+    {
+      "type": "single",
+      "resource": "badeyes:armor/simple_lens"
+    },
+    {
+      "type": "single",
+      "resource": "badeyes:armor/netherite_lens"
     }
   ]
 }

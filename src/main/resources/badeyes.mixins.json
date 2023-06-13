@@ -4,7 +4,6 @@
   "package": "dhyces.badeyes.mixins",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "DataGeneratorMixin",
     "InventoryMixin"
   ],
   "client": [

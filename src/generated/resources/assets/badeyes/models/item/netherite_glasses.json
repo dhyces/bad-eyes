@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "badeyes:item/netherite_glasses"
+    "layer0": "badeyes:item/netherite_frames",
+    "layer1": "badeyes:item/netherite_lens"
   }
 }

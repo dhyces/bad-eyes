@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "badeyes:item/simple_glasses"
+    "layer0": "badeyes:item/simple_frames",
+    "layer1": "badeyes:item/simple_lens"
   }
 }

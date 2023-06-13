@@ -1,19 +1,13 @@
 package dhyces.badeyes;
 
-import dhyces.badeyes.datagen.BadEyesLanguageProvider;
-import dhyces.badeyes.datagen.BadEyesModelProviders;
-import dhyces.badeyes.datagen.BadEyesRecipeProvider;
-import dhyces.badeyes.datagen.BadEyesTagProviders;
+import dhyces.badeyes.datagen.*;
 import dhyces.badeyes.datagen.onetwenty.BadEyesOneTwentyRecipeProvider;
-import dhyces.badeyes.datagen.onetwenty.ClientTagsProvider;
-import dhyces.badeyes.datagen.onetwenty.ItemOverrideProvider;
 import dhyces.badeyes.datagen.onetwenty.OneTwentyItemTagProvider;
 import dhyces.badeyes.network.Networking;
 import dhyces.badeyes.network.packets.DisableShaderPacket;
 import dhyces.badeyes.network.packets.EnableShaderPacket;
 import dhyces.badeyes.util.CuriosUtil;
 import dhyces.badeyes.util.GlassesSlot;
-import dhyces.badeyes.util.PackGenCreator;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
@@ -49,6 +43,8 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import top.theillusivec4.curios.api.SlotResult;
 
+import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Path;
 import java.util.concurrent.CompletableFuture;
 
 @Mod(BadEyes.MODID)
@@ -144,17 +140,34 @@ public class BadEyes {
         ExistingFileHelper fileHelper = event.getExistingFileHelper();
         PackOutput packOutput = generator.getPackOutput();
         CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
-        generator.addProvider(event.includeClient(), new BadEyesModelProviders.BadEyesItemModelProvider(packOutput, MODID, fileHelper));
-        generator.addProvider(event.includeClient(), new BadEyesLanguageProvider(packOutput, MODID, "en_us"));
+        if (event.includeClient()) {
+            BadEyesModelProviders.init(modelProvider -> generator.addProvider(true, modelProvider), packOutput, fileHelper);
+        }
+        generator.addProvider(event.includeClient(), new BadEyesLanguageProvider(packOutput, "en_us"));
         generator.addProvider(event.includeClient(), new ItemOverrideProvider(packOutput));
         generator.addProvider(event.includeClient(), new ClientTagsProvider(packOutput, fileHelper));
+        generator.addProvider(event.includeClient(), new AtlasProvider(packOutput, fileHelper));
+        generator.addProvider(event.includeClient(), new ClientMapsProviders(packOutput, fileHelper));
+        generator.addProvider(event.includeClient(), new ClientRegistryMapProvider(packOutput, lookupProvider, fileHelper));
 
         generator.addProvider(event.includeServer(), new BadEyesTagProviders.BadEyesItemTagProvider(packOutput, lookupProvider, CompletableFuture.supplyAsync(TagsProvider.TagLookup::empty), MODID, fileHelper));
         generator.addProvider(event.includeServer(), new BadEyesRecipeProvider(packOutput));
 
-        DataGenerator.PackGenerator oneTwentyPackGenerator = PackGenCreator.getAs(generator).createPackGenerator(true, PackOutput.Target.DATA_PACK, BadEyes.MODID, "one_twenty");
+        DataGenerator.PackGenerator oneTwentyPackGenerator = createPackGenerator(generator, packOutput, true, PackOutput.Target.DATA_PACK, BadEyes.MODID, "one_twenty");
         oneTwentyPackGenerator.addProvider(output -> PackMetadataGenerator.forFeaturePack(output, Component.literal("Fixes the mod for 1.20 and adds trims to glasses"), FeatureFlagSet.of(FeatureFlags.UPDATE_1_20)));
         oneTwentyPackGenerator.addProvider(BadEyesOneTwentyRecipeProvider::new);
         oneTwentyPackGenerator.addProvider(output -> new OneTwentyItemTagProvider(output, lookupProvider, fileHelper));
+    }
+
+    private DataGenerator.PackGenerator createPackGenerator(DataGenerator generator, PackOutput packOutput, boolean toRun, PackOutput.Target target, String namespace, String prefix) {
+        Path path = packOutput.getOutputFolder(target)
+                .resolve(namespace)
+                .resolve(target == PackOutput.Target.DATA_PACK ? "datapacks" : "resourcepacks")
+                .resolve(prefix);
+        try { // Inner class, so we have to do this silly little thing
+            return DataGenerator.PackGenerator.class.getConstructor(DataGenerator.class, boolean.class, String.class, PackOutput.class).newInstance(generator, toRun, prefix, new PackOutput(path));
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

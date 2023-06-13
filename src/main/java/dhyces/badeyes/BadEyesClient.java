@@ -2,27 +2,31 @@ package dhyces.badeyes;
 
 import dhyces.badeyes.client.ClientConfig;
 import dhyces.badeyes.client.GlassesRenderLayer;
+import dhyces.badeyes.client.model.GroupedModel;
 import dhyces.badeyes.util.CuriosUtil;
 import dhyces.badeyes.util.GlassesSlot;
+import dhyces.trimmed.api.TrimmedApi;
+import dhyces.trimmed.impl.client.maps.ClientMapKey;
+import dhyces.trimmed.impl.client.maps.ClientRegistryMapKey;
+import dhyces.trimmed.impl.client.tags.ClientTagKey;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HeadedModel;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.Item;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ModelEvent;
+import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.level.LevelEvent;
-import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.ModConfig;
@@ -32,36 +36,56 @@ import java.util.Optional;
 
 public class BadEyesClient {
 
+    public static final ClientTagKey ADDITIONAL_MODELS = ClientTagKey.of(BadEyes.id("additional_models"));
+    public static final ClientTagKey LENS_SHAPES = ClientTagKey.of(BadEyes.id("lens_shapes"));
+    public static final ClientMapKey LENS_COLORS = ClientMapKey.of(BadEyes.id("lens_colors"));
+    public static final ClientRegistryMapKey<Item> ITEM_LENS_SUFFIXES = ClientRegistryMapKey.of(Registries.ITEM, BadEyes.id("item_lens_suffixes"));
+
+    public static String itemBasedSuffix(Item item) {
+        return TrimmedApi.MAP_API.getSafeRegistryClientMap(ITEM_LENS_SUFFIXES).map(itemStringMap -> itemStringMap.get(item)).orElse("simple");
+    }
+
     public static boolean localHasBadEyes() {
         GlassesSlot glasses = BadEyes.getGlasses(Minecraft.getInstance().player);
         return glasses.stack().isEmpty() || !glasses.stack().is(BadEyes.GLASSES);
     }
 
-    public static boolean shouldLocalGlassesRender() {
-        GlassesSlot glasses = BadEyes.getGlasses(Minecraft.getInstance().player);
-        return glasses.isCurio() ? CuriosUtil.areGlassesVisible(Minecraft.getInstance().player) : !glasses.stack().isEmpty();
+    public static boolean shouldGlassesRender(LivingEntity livingEntity) {
+        GlassesSlot glasses = BadEyes.getGlasses(livingEntity);
+        return glasses.isCurio() ? CuriosUtil.areGlassesVisible(livingEntity) : !glasses.stack().isEmpty();
     }
 
     static void init(IEventBus modBus, IEventBus forgeBus) {
         modBus.addListener(BadEyesClient::registerAdditionalModels);
         modBus.addListener(BadEyesClient::entityRendererAddLayers);
         modBus.addListener(BadEyesClient::addToTabs);
+        modBus.addListener(BadEyesClient::addReloadListener);
+        modBus.addListener(BadEyesClient::addGeometryLoader);
         forgeBus.addListener(BadEyesClient::playerTick);
 
         ForgeConfigSpec spec = ClientConfig.build();
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, spec);
     }
 
-    static void addToTabs(CreativeModeTabEvent.BuildContents event) {
-        if (event.getTab().equals(CreativeModeTabs.COMBAT)) {
+    private static void addToTabs(CreativeModeTabEvent.BuildContents event) {
+        if (event.getTab() == CreativeModeTabs.COMBAT) {
             event.accept(BadEyes.SIMPLE_GLASSES);
             event.accept(BadEyes.NETHERITE_GLASSES);
         }
     }
 
-    static void registerAdditionalModels(ModelEvent.RegisterAdditional event) {
-        event.register(new ResourceLocation(BadEyes.MODID, "entity/simple_glasses"));
-        event.register(new ResourceLocation(BadEyes.MODID, "entity/netherite_glasses"));
+    private static void registerAdditionalModels(ModelEvent.RegisterAdditional event) {
+        TrimmedApi.TAG_API.getUncheckedTag(ADDITIONAL_MODELS).forEach(optionalId -> {
+            event.register(optionalId.elementId());
+        });
+    }
+
+    private static void addReloadListener(final RegisterClientReloadListenersEvent event) {
+        event.registerReloadListener(GlassesRenderLayer.CACHE);
+    }
+
+    private static void addGeometryLoader(final ModelEvent.RegisterGeometryLoaders event) {
+        event.register("grouped", GroupedModel.Loader.INSTANCE);
     }
 
     private static boolean firstTick = true;
@@ -79,6 +103,11 @@ public class BadEyesClient {
         if (shaderOptional.isPresent() && Minecraft.getInstance().gameRenderer.currentEffect() == null) {
             ResourceLocation shader = shaderOptional.map(resourceLocation -> resourceLocation.withPrefix("shaders/post/").withSuffix(".json")).get();
             Minecraft.getInstance().gameRenderer.loadEffect(shader);
+//            PostChain postChain = Minecraft.getInstance().gameRenderer.currentEffect();
+//            Optional<PostPass> postPassOptional = postChain.passes.stream().filter(pass -> pass.getName().equals("badeyes:box_blur")).findFirst();
+//            postPassOptional.ifPresent(postPass -> {
+//                postPass.getEffect().getUniform("Params").set(2, 100);
+//            });
         }
     }
 
